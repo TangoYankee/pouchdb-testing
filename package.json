@@ -1,0 +1,25 @@
+{
+  "name": "pouchdb-testing",
+  "version": "1.0.0",
+  "description": "Sandbox and explore PouchDB",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "github.com/tangoyankee/pouchdb-testing.git"
+  },
+  "keywords": [
+    "pouchdb",
+    "nodejs"
+  ],
+  "author": "Timothy Miller",
+  "license": "MIT",
+  "dependencies": {
+    "pouchdb-browser": "^7.2.1"
+  },
+  "devDependencies": {
+    "pouchdb": "^7.2.1"
+  }
+}
