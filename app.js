@@ -1,11 +1,12 @@
-const PouchDB = require('pouchdb')
+// const PouchDB = require('pouchdb')
 
+const username = env.COUCHDB_USERNAME || 'firstObserver'
+const password = env.COUCHDB_PASSWORD || 'firstObserverPassword'
+const domain = env.COUCHDB_DOMAIN || 'localhost'
+const port = env.COUCHDB_PORT || 5984
 const carsDB = new PouchDB('cars')
-
-const username = process.env.CARSRDB_USERNAME || 'firstObserver'
-const password = process.env.CARSRDB_PASSWORD || 'firstObserverPassword'
-// Remote Database
-const carsRDB = new PouchDB('http://localhost:5984/cars',
+// Basic Auth through PouchDB
+const carsDBR = new PouchDB(`http://${domain}:${port}/cars`,
     {
         "auth":
         {
@@ -15,13 +16,11 @@ const carsRDB = new PouchDB('http://localhost:5984/cars',
     })
 
 // https://stackoverflow.com/a/51264150/13729626
-const cookiesDB = new PouchDB('http://localhost:5984/basic',{
-    fetch: (url, opts) => fetch(url, {...opts, credentials: 'same-origin'})
-})
+// const cookiesDB = new PouchDB('http://localhost:5984/basic',{
+//     fetch: (url, opts) => fetch(url, {...opts, credentials: 'same-origin'})
+// })
 
-cookiesDB.info()
-
-carsRDB.info()
+carsDBR.info()
     .then((info) => {
         console.log(info)
     })
@@ -35,3 +34,45 @@ carsRDB.info()
 // jq.src = "/path/to/jQuery.min.js";
 // document.getElementsByTagName('head')[0].appendChild(jq);
 // jQuery.noConflict();
+
+// Basic Auth through fetch
+let basicAuthHeaders = new Headers()
+basicAuthHeaders.set('Authorization', 'Basic ' + btoa(username + ":" + password))
+
+// Cookie Auth through fetch
+let cookieAuthHeaders = new Headers()
+cookieAuthHeaders.set('Content-Type', 'application/json')
+
+const authData = {
+    name: username,
+    password: password
+}
+
+const options = {
+    method: 'POST',
+    headers: cookieAuthHeaders,
+    mode: 'cors',
+    credentials: 'include',
+    body: JSON.stringify(authData)
+}
+
+fetch(`http://${domain}:${port}/_session`, options)
+    .then(response => {
+        console.log(response)
+    })
+    .catch(err => console.warn('Error', err))
+
+
+var welcomeButton = document.getElementById('welcome-button')
+welcomeButton.onclick = getWelcomed
+
+function getWelcomed() {
+    fetch('http://localhost:8000/')
+        .then(response => response.json())
+        .then(data => {
+            alert(data.couchdb)
+        })
+        .catch(err => {
+            console.warn(err)
+        })
+}
