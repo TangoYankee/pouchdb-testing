@@ -8,10 +8,14 @@ const carsDB = new PouchDB('cars')
 // Basic Auth through PouchDB
 const carsDBR = new PouchDB(`http://${domain}:${port}/cars`,
     {
-        "auth":
+        auth:
         {
             "username": username,
             "password": password
+        },
+        fetch: (url, opts) => {
+            opts.credentials = 'omit'
+            return PouchDB.fetch(url, opts)
         }
     })
 
